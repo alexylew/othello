@@ -39,5 +39,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */ 
+
+    std::cerr << "first commit!" << std::endl;
     return NULL;
 }
