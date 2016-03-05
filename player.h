@@ -2,7 +2,6 @@
 #define __PLAYER_H__
 
 #include <iostream>
-#include <vector>
 #include <tuple>
 #include <cstdlib>
 
@@ -27,7 +26,7 @@ public:
     Side op_side;
 
 private: 
-    std::vector<std::tuple<Move*, double>> *findValidMoves();
+    std::vector<Move*> *findValidMoves(bool my_side);
     double moveScore(Move*);
     bool isCorner(Move*);
     Move *minimaxTree(std::vector<Move*>, int);

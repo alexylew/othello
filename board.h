@@ -25,6 +25,7 @@ public:
     bool hasMoves(Side side);
     bool checkMove(Move *m, Side side);
     void doMove(Move *m, Side side);
+    std::vector<Move*> *findValidMoves(Side side);
     int count(Side side);
     int countBlack();
     int countWhite();

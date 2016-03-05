@@ -53,41 +53,31 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
         std::cerr << "updating opponents move: " << opponentsMove->x << ", " << opponentsMove->y << std::endl;
         board_rep.doMove(opponentsMove, op_side);
     }
+    std::vector<Move*> *moves = board_rep.findValidMoves(my_side);
+    
+    std::vector<std::tuple<Move*, double>> moves_scored;
 
-    std::vector<std::tuple<Move*, double>> *moves = findValidMoves();
-
-    if (moves->size() > 0)
+    for (auto it = begin (*moves); it != end (*moves); it++) 
     {
-        std::tuple<Move*, double> best = (*moves)[0];
+        moves_scored.push_back(std::make_tuple(*it, moveScore(*it)));
+    }
+    
+    if (moves_scored.size() > 0)
+    {
+        std::tuple<Move*, double> best = moves_scored[0];
         
-        for (unsigned int i = 1; i < moves->size(); i++)
+        for (unsigned int i = 1; i < moves_scored.size(); i++)
         {
-            if (std::get<1>((*moves)[i]) > std::get<1>(best))
-                best = (*moves)[i];
+            if (std::get<1>(moves_scored[i]) > std::get<1>(best))
+                best = moves_scored[i];
         }
         
         board_rep.doMove(std::get<0>(best), my_side);
         return std::get<0>(best);
     }
+
     else    
         return NULL;
-}
-
-std::vector<std::tuple<Move*, double>> *Player::findValidMoves()
-{
-    std::vector<std::tuple<Move*, double>> *moves = new std::vector<std::tuple<Move*, double>>();
-    
-    for (int x = 0; x < 8; x++) 
-    {
-        for (int y = 0; y < 8; y++)
-        {
-            Move *curr = new Move(x, y);
-            if (board_rep.checkMove(curr, my_side))
-                moves->push_back(std::make_tuple(curr, moveScore(curr)));
-        }
-    }
-
-    return moves;
 }
 
 double Player::moveScore(Move *move)
@@ -118,14 +108,21 @@ Move *Player::minimaxTree(std::vector<Move*> moves, int depth)
         return best;
     }
 
+    // If this is the last depth, then just return the minimum seens
     else if (depth == 0)
     {
         int min_seen = MIN_DIFF;
         for (auto it = begin (moves); it != end (moves); it++) 
         {
+            // Do each move passed in
             Board *whatIf = board_rep.copy();
             whatIf->doMove(*it, op_side);
-            if ((whatIf->count(my_side) - whatIf->count(op_side) > min_seen))
+            
+            // Find the list of moves that 
+            std::vector<Move*> *op_moves = whatIf->findValidMoves(op_side);
+
+
+            if ((whatIf->count(my_side) - whatIf->count(op_side) < min_seen))
                 best = *it;
         }
     }

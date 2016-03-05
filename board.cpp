@@ -141,6 +141,27 @@ void Board::doMove(Move *m, Side side) {
     set(side, X, Y);
 }
 
+/* 
+ * Returns list of valid moves for a given side
+ */
+std::vector<Move*> *Board::findValidMoves(Side side)
+{
+    std::vector<Move*> *moves = new std::vector<Move*>();
+    
+    for (int x = 0; x < 8; x++) 
+    {
+        for (int y = 0; y < 8; y++)
+        {
+            Move *curr = new Move(x, y);
+            if (checkMove(curr, side))
+                moves->push_back(curr);
+        }
+    }
+
+    return moves;
+}
+
+
 /*
  * Current count of given side's stones.
  */
