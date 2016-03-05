@@ -1,7 +1,7 @@
-CC          = g++
-CFLAGS      = -Wall -ansi -pedantic -ggdb
+CC          = g++ 
+CFLAGS      = -Wall -ansi -pedantic -ggdb -std=c++11
 OBJS        = player.o board.o
-PLAYERNAME  = player
+PLAYERNAME  = walkermills
 
 all: $(PLAYERNAME) testgame
 	
