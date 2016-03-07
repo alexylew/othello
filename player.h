@@ -8,6 +8,7 @@
 #include "common.h"
 #include "board.h"
 
+#define MINIMAX_DEPTH 0
 
 using namespace std;
 
@@ -29,7 +30,8 @@ private:
     std::vector<Move*> *findValidMoves(bool my_side);
     double moveScore(Move*);
     bool isCorner(Move*);
-    Move *minimaxTree(std::vector<Move*>, int);
+    bool isAroundCorner(Move*);
+    std::tuple<Move*, int> minimaxTree(std::vector<Move*>, int);
 };
 
 #endif

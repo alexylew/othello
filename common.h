@@ -2,6 +2,7 @@
 #define __COMMON_H__
 
 #include <vector>
+#include <algorithm>
 
 #define MIN_DIFF 100
 
