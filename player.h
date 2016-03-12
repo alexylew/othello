@@ -28,7 +28,7 @@ public:
 
 private: 
     std::vector<Move*> *findValidMoves(bool my_side);
-    double moveScore(Move*);
+    double moveScore(Board*, Move*);
     bool isCorner(Move*);
     bool isAroundCorner(Move*);
     std::tuple<Move*, int> minimaxTree(std::vector<Move*>, int);
