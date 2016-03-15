@@ -31,7 +31,7 @@ private:
     double moveScore(Board*, Move*);
     bool isCorner(Move*);
     bool isAroundCorner(Move*);
-    std::tuple<Move*, int> minimaxTree(std::vector<Move*>, int);
+    std::tuple<Move*, int> *minimaxTree(std::vector<Move*>, int);
 };
 
 #endif

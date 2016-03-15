@@ -53,7 +53,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
     Move* best;
     if (moves->size() > 0)
     { 
-        best = std::get<0>(minimaxTree(*moves, MINIMAX_DEPTH));
+        best = std::get<0>(*(minimaxTree(*moves, MINIMAX_DEPTH)));
         board_rep.doMove(best, my_side);
         return best;
     }
@@ -103,14 +103,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft)
 double Player::moveScore(Board *board, Move *move)
 {
     double score = 0.0;
+
     // Corners heuristic as described above
     if (isCorner(move))
-        score -= 30.0;
+        score -= 1000.0;
     else if (isAroundCorner(move))
-        score += 15.0;
+        score += 12.0;
     
     // Coin parity heuristic
-    score += (board->count(op_side) - board->count(my_side));
+    score -= (board->count(op_side) - board->count(my_side));
 
     return score;
 }
@@ -159,9 +160,11 @@ bool Player::isAroundCorner(Move *move)
     return false;
 }
 
-std::tuple<Move*, int> Player::minimaxTree(std::vector<Move*> moves, int depth)
+std::tuple<Move*, int> *Player::minimaxTree(std::vector<Move*> moves, int depth)
 {
-    std::tuple<Move*, int> best;
+    std::cerr << "curr depth: " << depth << std::endl;
+    std::tuple<Move*, int> *best = new tuple<Move*, int>();
+    std::tuple<Move*, int> temp;
     std::vector<std::tuple<Move*, int>> move_values;
     
     // If this isn't the last depth, we need to recursively call to trace the whole tree
@@ -176,27 +179,31 @@ std::tuple<Move*, int> Player::minimaxTree(std::vector<Move*> moves, int depth)
             // Find the list of moves that opponent can make
             std::vector<Move*> *op_moves = whatIf->findValidMoves(op_side);
             
-            // For each of these moves, make the move
+            // For each of these moves, make the move 
             // Then pass the possible moves from there back to minimax recursive call
             std::vector<std::tuple<Move*, int>> op_move_values;
             for (auto it2 = begin (*op_moves); it2 != end (*op_moves); it2++)
             {
                 Board *thatsWhat = whatIf->copy();
                 thatsWhat->doMove(*it2, op_side);
-                op_move_values.push_back(minimaxTree(*(thatsWhat->findValidMoves(my_side)), depth - 1));
+                op_move_values.push_back(*(minimaxTree(*(thatsWhat->findValidMoves(my_side)), depth - 1)));
             }
             
             // Now, what we're interested in is the minimum value from the above set of moves
             // since it represents the result of each of the opponents possible moves
             // So, we push back the minimum move/value pair from each of the opponents moves 
             // onto our overall tracker
-            move_values.push_back(*(std::min_element(op_move_values.begin(), op_move_values.end(),
-            [] (std::tuple<Move*, int> const& first, std::tuple<Move*, int> const& second) 
-                {return std::get<1>(first) < std::get<1>(second);} )));
+            move_values.push_back(
+                std::make_tuple(
+                    *it, 
+                    std::get<1>(*(std::min_element(op_move_values.begin(), op_move_values.end(),
+                    [] (std::tuple<Move*, int> const& first, std::tuple<Move*, int> const& second) 
+                    {return std::get<1>(first) < std::get<1>(second);})))
+                    ));
         }
         
         // Set the best move equal to the move with the maximum minimum score
-        best = *(std::max_element(move_values.begin(), move_values.end(),
+        temp = *(std::max_element(move_values.begin(), move_values.end(),
             [] (std::tuple<Move*, int> const& first, std::tuple<Move*, int> const& second) 
                 {return std::get<1>(first) < std::get<1>(second);} ));
     }
@@ -228,13 +235,16 @@ std::tuple<Move*, int> Player::minimaxTree(std::vector<Move*> moves, int depth)
         move_values.push_back(std::make_tuple(*it, min_seen));
         }
         
-        best = *(std::max_element(move_values.begin(), move_values.end(),
+        temp = *(std::max_element(move_values.begin(), move_values.end(),
             [] (std::tuple<Move*, int> const& first, std::tuple<Move*, int> const& second) 
                 {return std::get<1>(first) < std::get<1>(second);} ));   
     }
 
     else
         std::cerr << "you screwed up the minimax pretty badly" << std::endl;
+
+    std::get<0>(*best) = std::get<0>(temp);
+    std::get<1>(*best) = std::get<1>(temp);
 
     return best;
 }

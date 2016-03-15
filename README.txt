@@ -1,1 +1,2 @@
-This is just a readme...
+The group was just me - Alex Lew.
+The group thought of different things in order to improve the algorithm. The biggest improvement would have been refining the scoring algorithm in order to better combine strategies such as corners and other heuristics. However, none of these other heuristics actually got implemented as the minimax algorithm didn't work with depth > 1 due to segfaults. Fixing that was a priority, but unfortunately I didn't have enough time. I did look at the UWashinggton paper and was going to hard code stability and some other heuristics, but without the minimax it wouldn't have worked very well. Nothing else was really done to make the bot tournament ready beyond tuning some constants and trying to fix minimax. 
